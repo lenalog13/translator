@@ -1,0 +1,14 @@
+        start   1000h
+st:     ldx     zero
+        lda     dat,X
+        addx    wsz
+        add     dat,X
+        sta     rez
+        hlt
+zero:   word    0
+wsz:    word    3       /coment
+rez:    resw    1
+dat:    word    7
+        word    11
+        end     st
+
