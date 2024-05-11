@@ -1,0 +1,29 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     "/Users/elenaloginova/Desktop/Чернышов/СПО/translator/main"
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _AssemblerString_ctor, symObjAddr: 0x0, symBinAddr: 0x100002394, symSize: 0x2C }
+  - { offsetInCU: 0x4D, offset: 0x4D, size: 0x8, addend: 0x0, symName: _instructionArray, symObjAddr: 0x1B18, symBinAddr: 0x100008000, symSize: 0x0 }
+  - { offsetInCU: 0x78, offset: 0x78, size: 0x8, addend: 0x0, symName: _instructionsCount, symObjAddr: 0x1B48, symBinAddr: 0x100003F8C, symSize: 0x0 }
+  - { offsetInCU: 0x99, offset: 0x99, size: 0x8, addend: 0x0, symName: _size, symBinAddr: 0x100008030, symSize: 0x0 }
+  - { offsetInCU: 0x168, offset: 0x168, size: 0x8, addend: 0x0, symName: _AssemblerString_ctor, symObjAddr: 0x0, symBinAddr: 0x100002394, symSize: 0x2C }
+  - { offsetInCU: 0x190, offset: 0x190, size: 0x8, addend: 0x0, symName: _AssemblerString_dctor, symObjAddr: 0x2C, symBinAddr: 0x1000023C0, symSize: 0xE0 }
+  - { offsetInCU: 0x1B4, offset: 0x1B4, size: 0x8, addend: 0x0, symName: _AssemblerString_toString, symObjAddr: 0x10C, symBinAddr: 0x1000024A0, symSize: 0x178 }
+  - { offsetInCU: 0x1E6, offset: 0x1E6, size: 0x8, addend: 0x0, symName: _StringCopy, symObjAddr: 0x284, symBinAddr: 0x100002618, symSize: 0xE4 }
+  - { offsetInCU: 0x22A, offset: 0x22A, size: 0x8, addend: 0x0, symName: _IsInstruction, symObjAddr: 0x368, symBinAddr: 0x1000026FC, symSize: 0xC8 }
+  - { offsetInCU: 0x27C, offset: 0x27C, size: 0x8, addend: 0x0, symName: _DeleteNewStr, symObjAddr: 0x430, symBinAddr: 0x1000027C4, symSize: 0x6C }
+  - { offsetInCU: 0x2A0, offset: 0x2A0, size: 0x8, addend: 0x0, symName: _ParseString, symObjAddr: 0x49C, symBinAddr: 0x100002830, symSize: 0x340 }
+  - { offsetInCU: 0x3C1, offset: 0x3C1, size: 0x8, addend: 0x0, symName: _ParseFile, symObjAddr: 0x7DC, symBinAddr: 0x100002B70, symSize: 0x160 }
+  - { offsetInCU: 0x447, offset: 0x447, size: 0x8, addend: 0x0, symName: _newHashTable, symObjAddr: 0x93C, symBinAddr: 0x100002CD0, symSize: 0xBC }
+  - { offsetInCU: 0x4A7, offset: 0x4A7, size: 0x8, addend: 0x0, symName: _hashCode, symObjAddr: 0x9F8, symBinAddr: 0x100002D8C, symSize: 0xC4 }
+  - { offsetInCU: 0x507, offset: 0x507, size: 0x8, addend: 0x0, symName: _search, symObjAddr: 0xABC, symBinAddr: 0x100002E50, symSize: 0x144 }
+  - { offsetInCU: 0x567, offset: 0x567, size: 0x8, addend: 0x0, symName: _add, symObjAddr: 0xC00, symBinAddr: 0x100002F94, symSize: 0x234 }
+  - { offsetInCU: 0x5FB, offset: 0x5FB, size: 0x8, addend: 0x0, symName: _print, symObjAddr: 0xE34, symBinAddr: 0x1000031C8, symSize: 0xCC }
+  - { offsetInCU: 0x62D, offset: 0x62D, size: 0x8, addend: 0x0, symName: _str_reverse, symObjAddr: 0xF00, symBinAddr: 0x100003294, symSize: 0xE4 }
+  - { offsetInCU: 0x6A9, offset: 0x6A9, size: 0x8, addend: 0x0, symName: _decToHex, symObjAddr: 0xFE4, symBinAddr: 0x100003378, symSize: 0x160 }
+  - { offsetInCU: 0x701, offset: 0x701, size: 0x8, addend: 0x0, symName: _hexToDec, symObjAddr: 0x1144, symBinAddr: 0x1000034D8, symSize: 0x184 }
+  - { offsetInCU: 0x753, offset: 0x753, size: 0x8, addend: 0x0, symName: _initMnemonicsTable, symObjAddr: 0x12C8, symBinAddr: 0x10000365C, symSize: 0x1F0 }
+  - { offsetInCU: 0x777, offset: 0x777, size: 0x8, addend: 0x0, symName: _first_parse, symObjAddr: 0x14B8, symBinAddr: 0x10000384C, symSize: 0x260 }
+  - { offsetInCU: 0x7FD, offset: 0x7FD, size: 0x8, addend: 0x0, symName: _second_parse, symObjAddr: 0x1718, symBinAddr: 0x100003AAC, symSize: 0x1CC }
+  - { offsetInCU: 0x8AF, offset: 0x8AF, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x18E4, symBinAddr: 0x100003C78, symSize: 0xE8 }
+...
