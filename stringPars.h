@@ -47,8 +47,9 @@ sprintf(outBuffer, "Label:%s \t\t Instruction:%s \t\t Operand:%s \t\t Comment:%s
 
 }
 
-const char* instructionArray[] ={"start","end","byte","word","resb","resw"}; 
-const int instructionsCount = 6;
+const char* instructionArray[] ={"START", "END", "BYTE", "WORD", "RESB", "RESW", "MOV", "ADD", "SUB", "CMP", 
+"MUL", "DIV", "JE", "LOOP", "CALL", "RET", "HLT"}; 
+const int instructionsCount = 17;
 
 char* StringCopy(const char* string, size_t copyCount)
 {
