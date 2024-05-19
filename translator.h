@@ -99,15 +99,15 @@ void first_parse(FILE* fp, hashTable* names) {
             }
         }
  
-        // НАДО ПРОВЕРИТЬ
+        counter += 3;
+        
         // Обработка инструкций
         if (asStr->instruction != NULL) {
             if (strcmp(asStr->instruction, "START") == 0) {
                 start = hexToDec(asStr->instruction);
-                counter = start; // Счетчик устанавливается на начальное значение
+                counter += start - 6; // Счетчик устанавливается на начальное значение
             } else if (strcmp(asStr->instruction, "END") == 0) {
                 size = decToHex(counter - start); // Вычисление размера кода
-                break; // Завершение обработки файла после инструкции END
             } else if (asStr->instruction != NULL) {
             const char splits2[] = ",";
             char* oper = malloc(sizeof(char) * strlen(asStr->instruction));
@@ -157,12 +157,7 @@ void first_parse(FILE* fp, hashTable* names) {
             }
         }
     
-
         AssemblerString_dctor(asStr); // Освобождение памяти
-        counter += 3; // Увеличение счетчика на размер инструкции
-
-    //      printf("Метка: %20s, Оператор: %20s, Операнд: %20s, Комментарий: %s\n",
-    //        asStr->label, asStr->instruction, asStr->operand, asStr->comment);
 
     }
 }
@@ -211,6 +206,7 @@ void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
                 fprintf(output_file," Бинарный дамп: %s", dump);
                 return;
             } else {
+
                 obj_byte_counter++;
                 if (obj_byte_counter == 3){
                     obj_byte_counter = 1;
@@ -229,17 +225,6 @@ void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
 
                 // Обработка остальных инструкций
                 DataItem* mnemonic = search(asStr->instruction, mnemonics);
-                /*
-                if (mnemonic) {
-                    printf("Машинная команда: %s\n", mnemonic->info);
-                    strcat(obj_code_str, mnemonic->info);
-                    obj_byte_counter++;
-                    if (obj_byte_counter == 3) {
-                        strcat(obj_code_str, "XX\n");
-                        fputs(obj_code_str, output_file);
-                        obj_code_str[0] = '\0';
-                        obj_byte_counter = 0;
-                */
                 if (mnemonic != NULL) {
                 printf("Машинная команда: ");
                     if (mnemonic->mark != 1) {
@@ -257,36 +242,6 @@ void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
                 }
             }
         }
-    /*
-        // Проверка и обработка операндов
-        if (asStr->operand) {
-            // Добавить обработку операндов
-            printf("Операнд: %s\n", asStr->operand);
-            // Пример: добавление операнда в объектный код
-            strcat(obj_code_str, asStr->operand);
-        }
-
-        // Проверка и обработка комментариев
-        if (asStr->comment) {
-            // Добавить обработку комментариев
-            printf("Комментарий: %s\n", asStr->comment);
-        }
-
-        // Сборка объектного кода и вывод в файл
-        // Пример: завершение строки объектного кода
-        if (strlen(obj_code_str) > 0) {
-            strcat(obj_code_str, "\n");
-            fputs(obj_code_str, output_file);
-            obj_code_str[0] = '\0';
-        }
-
-        counter += 3;  // Обновление счетчика, предположим, что каждая инструкция занимает 3 байта
-        AssemblerString_dctor(asStr);
-    }
-
-    fclose(output_file);
-}
-*/
 
  if (asStr->operand){
             bool print = false;
@@ -389,5 +344,3 @@ void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
         printf("\n");
     }
 }
-
-
