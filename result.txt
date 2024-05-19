@@ -1,0 +1,24 @@
+Адрес начала: 1000h
+Точка входа: 1000h
+10ax,worda
+10bx,wordb
+18XX
+compr
+14ax,bx
+10cx,16
+11XX
+ax,1
+17cycle
+13bx,ax
+16XX
+exit
+19
+10bytew,ax
+1AXX
+-115
+-17
+-1XX
+1
+XX
+:00102D01XX
+Размер программы: 

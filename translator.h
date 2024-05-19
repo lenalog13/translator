@@ -71,7 +71,9 @@ void initMnemonicsTable(hashTable* mnemonics){
     add("CALL", "18", 0, mnemonics);
     add("RET", "19", 0, mnemonics);
     add("HLT", "1A", 0, mnemonics);
-    print(mnemonics);
+
+
+
 }
 
 
@@ -163,17 +165,16 @@ void first_parse(FILE* fp, hashTable* names) {
     //        asStr->label, asStr->instruction, asStr->operand, asStr->comment);
 
     }
-
 }
-print(names);
 }
 
+/*
 void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
     FILE* output_file = fopen("result.txt", "w");
-    if (!fp || !output_file) {
-        // Обработка ошибки открытия файла
-        return;
-    }
+//    if (!fp || !output_file) {
+//        // Обработка ошибки открытия файла
+//        return;
+//    }
 
     int counter = 0;
     int obj_byte_counter = 0;
@@ -215,6 +216,103 @@ void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
         // Сборка объектного кода и вывод в файл
         // ...
 
+        AssemblerString_dctor(asStr);
+    }
+
+    fclose(output_file);
+}
+*/
+
+void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
+    FILE* output_file = fopen("result.txt", "w");
+    if (!fp || !output_file) {
+        // Обработка ошибки открытия файла
+        return;
+    }
+
+    int counter = 0;
+    int obj_byte_counter = 0;
+    char code_str[256];
+    char obj_code_str[256], dump[256];
+    obj_code_str[0] = '\0';
+    dump[0] = '\0';
+
+    while (fgets(code_str, 256, fp)) {
+        AssemblerString* asStr = AssemblerString_ctor();
+        ParseString(code_str, asStr);
+
+        // Проверка и обработка метки
+        if (asStr->label) {
+            // Добавить обработку метки
+            printf("Найдена метка: %s\n", asStr->label);
+            // Пример: добавить метку в таблицу имен (names)
+            if (search(asStr->label, names) == NULL) {
+                DataItem* item = (DataItem*)malloc(sizeof(DataItem));
+                item->key = strdup(asStr->label);
+                item->info = strdup(decToHex(counter)); // или другой адрес/значение
+                add(item->key, item->info, item->mark, names);
+            //    insert(names, item->key, item->info);
+            }
+        }
+
+        // Проверка и обработка инструкций
+        if (asStr->instruction) {
+            if (strcmp(asStr->instruction, "START") == 0) {
+                // Обработка инструкции START
+                int start = hexToDec(asStr->operand);
+                counter = start;
+                fprintf(output_file, "Адрес начала: %sh\n", asStr->operand);
+                fprintf(output_file, "Точка входа: %sh\n", asStr->operand);
+                continue;
+            } else if (strcmp(asStr->instruction, "END") == 0) {
+                // Обработка инструкции END
+                strcat(obj_code_str, "XX\n");
+                fputs(obj_code_str, output_file);
+                fprintf(output_file, ":00%s01XX", decToHex(counter));
+                fprintf(output_file, "\nРазмер программы: %s\n", dump);  // пример: вывод дампа
+                break;
+            } else {
+                // Обработка остальных инструкций
+                DataItem* mnemonic = search(asStr->instruction, mnemonics);
+                if (mnemonic) {
+                    printf("Машинная команда: %s\n", mnemonic->info);
+                    strcat(obj_code_str, mnemonic->info);
+                    obj_byte_counter++;
+                    if (obj_byte_counter == 3) {
+                        strcat(obj_code_str, "XX\n");
+                        fputs(obj_code_str, output_file);
+                        obj_code_str[0] = '\0';
+                        obj_byte_counter = 0;
+                    }
+                } else {
+                    printf("Ошибка: неизвестная инструкция %s\n", asStr->instruction);
+                }
+            }
+        }
+
+        // Проверка и обработка операндов
+        if (asStr->operand) {
+            // Добавить обработку операндов
+            printf("Операнд: %s\n", asStr->operand);
+            // Пример: добавление операнда в объектный код
+            strcat(obj_code_str, asStr->operand);
+        }
+
+        // Проверка и обработка комментариев
+        if (asStr->comment) {
+            // Добавить обработку комментариев
+            printf("Комментарий: %s\n", asStr->comment);
+        }
+
+        // Сборка объектного кода и вывод в файл
+        // Пример: завершение строки объектного кода
+        if (strlen(obj_code_str) > 0) {
+            strcat(obj_code_str, "\n");
+            fputs(obj_code_str, output_file);
+            obj_code_str[0] = '\0';
+        }
+
+        counter += 3;  // Обновление счетчика, предположим, что каждая инструкция занимает 3 байта
         AssemblerString_dctor(asStr);
     }
 
