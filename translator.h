@@ -71,101 +71,9 @@ void initMnemonicsTable(hashTable* mnemonics){
     add("CALL", "18", 0, mnemonics);
     add("RET", "19", 0, mnemonics);
     add("HLT", "1A", 0, mnemonics);
+    print(mnemonics);
 }
 
-/*
-void first_parse(FILE* fp, hashTable* names) {
-    int counter = 0;
-    int start = 0;
-    char code_str[256];
-    AssemblerString* asStr;
-
-    while (fgets(code_str, 256, fp)) {
-        DeleteNewStr(code_str); // Удаление символа новой строки
-        asStr = AssemblerString_ctor(); // Создание новой структуры AssemblerString
-        ParseString(code_str, asStr); // Разбор строки
-
-        // Обработка метки
-        if (asStr->label != NULL) {
-            DataItem* check = search(asStr->label, names);
-            if (check == NULL) {
-                add(StringCopy(asStr->label, 0), decToHex(counter), 1, names);
-            } else if (strcmp(check->key, asStr->label) == 0 && check->mark == 0) {
-                check->mark = 1;
-                check->info = decToHex(counter);
-            }
-        }
- 
-        // НАДО ПРОВЕРИТЬ
-        // Обработка инструкций
-        if (asStr->instruction != NULL) {
-            if (strcmp(asStr->instruction, "START") == 0) {
-                start = hexToDec(asStr->operand);
-                counter = start; // Счетчик устанавливается на начальное значение
-            } else if (strcmp(asStr->instruction, "END") == 0) {
-                size = decToHex(counter - start); // Вычисление размера кода
-              //  break; // Завершение обработки файла после инструкции END
-            } else if (asStr->operand != NULL) {
-            const char splits2[] = ",";
-            char* oper = malloc(sizeof(char) * strlen(asStr->operand));
-            if (strchr(asStr->operand, ',') == NULL)
-                strcpy(oper, asStr->operand);
-            else {
-                for(int i = 0; i < 2; i++) {
-                    if(i == 0)
-                        oper = strtok(asStr->operand, splits2);
-                    else
-                        oper = strtok(NULL, splits2);
-                    if (strcmp(oper, "ax") != 0 && strcmp(oper, "bx") != 0 && strcmp(oper, "cx") != 0 &&
-                        strcmp(oper, "dx") != 0) {
-                        if (oper != NULL || i == 0) {
-                            bool isDigit = true;
-                            for (int i = 0; i < strlen(oper); i++) {
-                                if (isdigit(oper[i]) == 0)
-                                    isDigit = false;
-                            }
-                            if (!isDigit) {
-                                DataItem *check = search(oper, names);
-                                if (check == NULL) {
-                                    char *temp = malloc(sizeof(char) * strlen(oper));
-                                    strcpy(temp, oper);
-                                    add(temp, decToHex(counter), 0, names);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-
-        // Обработка операндов
-        if (asStr->operand != NULL) {
-            DataItem* check = search(asStr->operand, names);
-            if (check == NULL) {
-                char* temp = malloc(sizeof(char) * strlen(asStr->operand));
-                strcpy(temp, asStr->operand);
-                add(temp, decToHex(counter), 1, names);
-
-            }
-            else if (strcmp(check->key, asStr->operand) == 0 && check->mark == 0){
-                check->mark = 1;
-                check->info = decToHex(counter);
-            }
-        }
-    
-
-        AssemblerString_dctor(asStr); // Освобождение памяти
-        counter += 3; // Увеличение счетчика на размер инструкции
-
-         
-    }
-    printf("Метка: %20s, Оператор: %20s, Операнд: %20s, Комментарий: %s\n",
-         asStr->label, asStr->instruction, asStr->operand, asStr->comment);
-   
-}
-}
-*/
 
 void first_parse(FILE* fp, hashTable* names) {
     int counter = 0;
@@ -177,9 +85,6 @@ void first_parse(FILE* fp, hashTable* names) {
         DeleteNewStr(code_str); // Удаление символа новой строки
         asStr = AssemblerString_ctor(); // Создание новой структуры AssemblerString
         ParseString(code_str, asStr); // Разбор строки
-
-         printf("Метка: %20s, Оператор: %20s, Операнд: %20s, Комментарий: %s\n",
-            asStr->label, asStr->instruction, asStr->operand, asStr->comment);
 
         // Обработка метки
         if (asStr->label != NULL) {
@@ -254,9 +159,13 @@ void first_parse(FILE* fp, hashTable* names) {
         AssemblerString_dctor(asStr); // Освобождение памяти
         counter += 3; // Увеличение счетчика на размер инструкции
 
+    //      printf("Метка: %20s, Оператор: %20s, Операнд: %20s, Комментарий: %s\n",
+    //        asStr->label, asStr->instruction, asStr->operand, asStr->comment);
+
     }
 
 }
+print(names);
 }
 
 void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
