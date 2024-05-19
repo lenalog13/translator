@@ -168,14 +168,11 @@ void first_parse(FILE* fp, hashTable* names) {
 }
 }
 
-/*
+
 void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
     FILE* output_file = fopen("result.txt", "w");
-//    if (!fp || !output_file) {
-//        // Обработка ошибки открытия файла
-//        return;
-//    }
 
+    int start;
     int counter = 0;
     int obj_byte_counter = 0;
     char code_str[256];
@@ -187,93 +184,52 @@ void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
         AssemblerString* asStr = AssemblerString_ctor();
         ParseString(code_str, asStr);
 
-        // Проверка и обработка метки
-        if (asStr->label) {
-            // Добавить обработку метки
-        }
+        counter += 3;
+
+        if (counter != 3)
+            printf("Счётчик размещения: %s   ", decToHex(counter));
 
         // Проверка и обработка инструкций
         if (asStr->instruction) {
             if (strcmp(asStr->instruction, "START") == 0) {
                 // Обработка инструкции START
-            } else if (strcmp(asStr->instruction, "END") == 0) {
-                // Обработка инструкции END
-            } else {
-                // Обработка остальных инструкций
-            }
-        }
-
-        // Проверка и обработка операндов
-        if (asStr->operand) {
-            // Добавить обработку операндов
-        }
-
-        // Проверка и обработка комментариев
-        if (asStr->comment) {
-            // Добавить обработку комментариев
-        }
-
-        // Сборка объектного кода и вывод в файл
-        // ...
-
-        AssemblerString_dctor(asStr);
-    }
-
-    fclose(output_file);
-}
-*/
-
-void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
-    FILE* output_file = fopen("result.txt", "w");
-    if (!fp || !output_file) {
-        // Обработка ошибки открытия файла
-        return;
-    }
-
-    int counter = 0;
-    int obj_byte_counter = 0;
-    char code_str[256];
-    char obj_code_str[256], dump[256];
-    obj_code_str[0] = '\0';
-    dump[0] = '\0';
-
-    while (fgets(code_str, 256, fp)) {
-        AssemblerString* asStr = AssemblerString_ctor();
-        ParseString(code_str, asStr);
-
-        // Проверка и обработка метки
-        if (asStr->label) {
-            // Добавить обработку метки
-            printf("Найдена метка: %s\n", asStr->label);
-            // Пример: добавить метку в таблицу имен (names)
-            if (search(asStr->label, names) == NULL) {
-                DataItem* item = (DataItem*)malloc(sizeof(DataItem));
-                item->key = strdup(asStr->label);
-                item->info = strdup(decToHex(counter)); // или другой адрес/значение
-                add(item->key, item->info, item->mark, names);
-            //    insert(names, item->key, item->info);
-            }
-        }
-
-        // Проверка и обработка инструкций
-        if (asStr->instruction) {
-            if (strcmp(asStr->instruction, "START") == 0) {
-                // Обработка инструкции START
-                int start = hexToDec(asStr->operand);
-                counter = start;
+                start = hexToDec(asStr->operand);
+                counter += start - 6;
                 fprintf(output_file, "Адрес начала: %sh\n", asStr->operand);
                 fprintf(output_file, "Точка входа: %sh\n", asStr->operand);
+                fprintf(output_file, "Объектный код:\n:02%s02", asStr->operand);
+                 for (int i = 0; i < 4 - strlen(size); i++)
+                    fprintf(output_file, "0");
+                fprintf(output_file,"%sXX\n", size);
                 continue;
             } else if (strcmp(asStr->instruction, "END") == 0) {
                 // Обработка инструкции END
                 strcat(obj_code_str, "XX\n");
                 fputs(obj_code_str, output_file);
-                fprintf(output_file, ":00%s01XX", decToHex(counter));
-                fprintf(output_file, "\nРазмер программы: %s\n", dump);  // пример: вывод дампа
-                break;
+                fprintf(output_file, ":00%s01XX", decToHex(start));
+                fprintf(output_file,"\nРазмер программы: %sh\n", size);
+                fprintf(output_file," Бинарный дамп: %s", dump);
+                return;
             } else {
+                obj_byte_counter++;
+                if (obj_byte_counter == 3){
+                    obj_byte_counter = 1;
+                    strcat(obj_code_str, "XX\n");
+                    fputs(obj_code_str, output_file);
+                    obj_code_str[0] = '\0';
+                }
+                if (obj_byte_counter == 1){
+                    strcat(obj_code_str, ":03");
+                    strcat(obj_code_str, decToHex(counter));
+                    strcat(obj_code_str, "00");
+                }
+                if (obj_byte_counter == 2){
+                    obj_code_str[2] = '6';
+                }
+
                 // Обработка остальных инструкций
                 DataItem* mnemonic = search(asStr->instruction, mnemonics);
+                /*
                 if (mnemonic) {
                     printf("Машинная команда: %s\n", mnemonic->info);
                     strcat(obj_code_str, mnemonic->info);
@@ -283,13 +239,25 @@ void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
                         fputs(obj_code_str, output_file);
                         obj_code_str[0] = '\0';
                         obj_byte_counter = 0;
+                */
+                if (mnemonic != NULL) {
+                printf("Машинная команда: ");
+                    if (mnemonic->mark != 1) {
+                        printf("%s", mnemonic->info);
+                        strcat(dump, mnemonic->info);
+                        strcat(obj_code_str, mnemonic->info);
+                    } else {
+                        strcat(dump, "00");
+                        strcat(obj_code_str, "00");
+                        printf("00");
+
                     }
                 } else {
                     printf("Ошибка: неизвестная инструкция %s\n", asStr->instruction);
                 }
             }
         }
-
+    /*
         // Проверка и обработка операндов
         if (asStr->operand) {
             // Добавить обработку операндов
@@ -318,3 +286,108 @@ void second_parse(FILE* fp, hashTable* names, hashTable* mnemonics) {
 
     fclose(output_file);
 }
+*/
+
+ if (asStr->operand){
+            bool print = false;
+            const char splits2[] = ",";
+            char* oper = malloc(sizeof(char) * strlen(asStr->operand));
+            if (strchr(asStr->operand, ',') == NULL) {
+                strcpy(oper, asStr->operand);
+                bool isDigit = true;
+                for (int i = 0; i < strlen(oper); i++) {
+                    if (isdigit(oper[i]) == 0)
+                        isDigit = false;
+                }
+                if (!isDigit) {
+                    if (search(oper, names) != NULL){
+                        if (search(oper, names)->hashKey >= 0) {
+                            printf("%s", search(oper, names)->info);
+                            strcat(dump, search(oper, names)->info);
+                            strcat(obj_code_str, search(oper, names)->info);
+                            print = true;
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < 4 - strlen(oper); i++) {
+                        printf("0");
+                        strcat(dump, "0");
+                        strcat(obj_code_str, "0");
+                    }
+                    strcat(dump, oper);
+                    strcat(obj_code_str, oper);
+                    printf("%s", oper);
+                    print = true;
+                }
+            }
+            else {
+                oper = strtok(asStr->operand, splits2);
+                bool isDigit = true;
+                for (int i = 0; i < strlen(oper); i++) {
+                    if (isdigit(oper[i]) == 0)
+                        isDigit = false;
+                }
+                if (!isDigit) {
+                    if (search(oper, names) != NULL){
+                        if (search(oper, names)->hashKey >= 0) {
+                            strcat(dump, search(oper, names)->info);
+                            strcat(obj_code_str, search(oper, names)->info);
+                            printf("%s", search(oper, names)->info);
+                            print = true;
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < 4 - strlen(oper); i++) {
+                        strcat(dump, "0");
+                        strcat(obj_code_str, "0");
+                        printf( "0");
+                    }
+                    strcat(dump, oper);
+                    strcat(obj_code_str, oper);
+                    printf("%s", oper);
+                    print = true;
+                }
+                oper = strtok(NULL, splits2);
+                if (oper != NULL) {
+                    bool isDigit2 = true;
+                    for (int i = 0; i < strlen(oper); i++) {
+                        if (isdigit(oper[i]) == 0)
+                            isDigit2 = false;
+                    }
+                    if (!isDigit2) {
+                        if (search(oper, names) != NULL) {
+                            if (search(oper, names)->hashKey >= 0) {
+                                strcat(dump, search(oper, names)->info);
+                                strcat(obj_code_str, search(oper, names)->info);
+                                printf("%s", search(oper, names)->info);
+                                print = true;
+                            }
+                        }
+                    } else {
+                        for (int i = 0; i < 4 - strlen(oper); i++) {
+                            strcat(dump, "0");
+                            strcat(obj_code_str, "0");
+                            printf("0");
+                        }
+                        strcat(dump, oper);
+                        strcat(obj_code_str, oper);
+                        printf("%s", oper);
+                        print = true;
+                    }
+                }
+            }
+            if (!print) {
+                strcat(dump, "0000");
+                strcat(obj_code_str, "0000");
+                printf("0000");
+            }
+        } else if (asStr->instruction) {
+            strcat(dump, "0000");
+            strcat(obj_code_str, "0000");
+            printf( "0000");
+        }
+        printf("\n");
+    }
+}
+
+
